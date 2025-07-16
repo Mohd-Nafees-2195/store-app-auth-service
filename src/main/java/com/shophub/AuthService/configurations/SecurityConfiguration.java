@@ -13,6 +13,7 @@ public class SecurityConfiguration {
         return http.authorizeHttpRequests(
                 (request)->
                 request.anyRequest().permitAll()
-        ).build();
+        ).csrf((c)->c.disable())
+                .build();
     }
 }

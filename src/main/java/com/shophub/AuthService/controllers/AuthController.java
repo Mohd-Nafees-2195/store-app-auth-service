@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -23,7 +20,7 @@ public class AuthController {
     @PostMapping("/sign_up")
     public ResponseEntity<SignupResponseDto> signUp(@RequestBody SignupRequestDto request){
         SignupResponseDto response=new SignupResponseDto();
-        if(authService.signUp(request.getEmail(), request.getPassword())){
+        if(authService.signUp(request .getEmail(), request.getPassword())){
             response.setRequestStatus(RequestStatus.SUCCESS);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }else {
@@ -34,17 +31,33 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request){
-        String token=authService.login(request.getEmail(), request.getPassword());
         LoginResponseDto responseDto=new LoginResponseDto();
-        responseDto.setRequestStatus(RequestStatus.SUCCESS);
+        try {
+            String token=authService.login(request.getEmail(), request.getPassword());
+            responseDto.setRequestStatus(RequestStatus.SUCCESS);
 
-        MultiValueMap<String,String> headers=new LinkedMultiValueMap<>();
-        headers.add("AUTH_TOKEN",token);
+            MultiValueMap<String,String> headers=new LinkedMultiValueMap<>();
+            headers.add("AUTH_TOKEN",token);
 
-        ResponseEntity<LoginResponseDto> response=new ResponseEntity<>(
-                responseDto,headers, HttpStatus.OK
-        );
-        return response;
-
+            ResponseEntity<LoginResponseDto> response=new ResponseEntity<>(
+                    responseDto,headers, HttpStatus.OK
+            );
+            return response;
+        }catch (Exception e){
+            responseDto.setRequestStatus(RequestStatus.FAILURE);
+            ResponseEntity<LoginResponseDto> response=new ResponseEntity<>(
+                    responseDto,null, HttpStatus.OK
+            );
+            return response;
+        }
     }
+
+    @GetMapping("/validate")
+    public Boolean validateToken(@PathVariable("token") String token){
+        return authService.validate(token);
+    }
+//    @GetMapping
+//    public String test(){
+//        return "Success";
+//    }
 }

@@ -5,4 +5,12 @@ import lombok.Data;
 @Data
 public class SignupResponseDto {
     private RequestStatus requestStatus;
+
+    public RequestStatus getRequestStatus() {
+        return requestStatus;
+    }
+
+    public void setRequestStatus(RequestStatus requestStatus) {
+        this.requestStatus = requestStatus;
+    }
 }
