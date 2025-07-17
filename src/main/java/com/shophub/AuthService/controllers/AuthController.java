@@ -53,11 +53,7 @@ public class AuthController {
     }
 
     @GetMapping("/validate")
-    public Boolean validateToken(@PathVariable("token") String token){
+    public Boolean validateToken(@RequestParam("token") String token){
         return authService.validate(token);
     }
-//    @GetMapping
-//    public String test(){
-//        return "Success";
-//    }
 }
